@@ -1,0 +1,30 @@
+spring:
+  application: ElectorAI
+  datasource:
+    url: jdbc:mysql://localhost:3306/elevator?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  ai:
+    url: https://api.deepseek.com/v1/chat/completions
+    key: sk-fd837390c81c48e48a7de88916c233e0
+    chat:
+      options:
+        model: deepseek-chat
+
+server:
+  port: 8080
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath*:mapper/*.xml
+
+  spring:
+    devtools:
+      restart:
+        enabled: true
+        additional-paths: src/main/java
+        exclude: static/**,public/**,templates/**,log/**
