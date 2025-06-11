@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -53,4 +56,30 @@ public class DataRecordsServiceImpl extends ServiceImpl<DataRecordsMapper, DataR
                 return Result.error("查询电梯故障记录失败");
         }
     }
+
+    /**
+     * 根据故障类型查找电梯故障记录
+     */
+    @Override
+    public Result<List<DataRecords>> getErrorDataByType(DataRecords type) {
+        try{
+            //根据故障类型 查找故障记录
+            QueryWrapper<DataRecords> Wrapper = new QueryWrapper<>();
+            Wrapper.eq("type",type.getType());
+            List<DataRecords> list = dataRecordsMapper.selectList(Wrapper);
+            if(list == null|| list.isEmpty()){
+                log.info("未查询到相关数据");
+                return Result.success("未查询到相关数据");
+            }
+            else{
+                log.info("查询记录成功");
+                return Result.success("查询记录成功",list);
+            }
+
+        }catch (Exception e){
+            log.error("查询失败",e);
+            return Result.error("查询失败");
+        }
+    }
+
 }

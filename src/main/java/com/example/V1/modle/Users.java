@@ -18,46 +18,28 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author Netlibata
- * @since 2025-06-09
+ * @since 2025-06-11
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("data_records")
-public class DataRecords implements Serializable {
+@TableName("users")
+public class Users implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键 ID
-     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 生成时间
-     */
-    @TableField("create_date")
-    private LocalDateTime createDate;
+    @TableField("user_name")
+    private String userName;
 
-    /**
-     * 故障类型
-     */
-    @TableField("type")
-    private String type;
+    @TableField("m_password")
+    private String mPassword;
 
-    /**
-     * 异常数值
-     */
-    @TableField("e_data")
-    private String eData;
-
-    /**
-     * 异常数据的名字
-     */
-    @TableField("e_name")
-    private String eName;
+    @TableField("last_login")
+    private LocalDateTime lastLogin;
 
 
 }

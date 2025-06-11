@@ -23,4 +23,8 @@ public interface IDataRecordsService extends IService<DataRecords> {
      */
     Result<IPage<DataRecords>> getErrorData(Long current, Long size);
 
+    /**
+     * 根据故障类型查询电梯故障记录
+     */
+    Result<List<DataRecords>> getErrorDataByType(DataRecords type);
 }
