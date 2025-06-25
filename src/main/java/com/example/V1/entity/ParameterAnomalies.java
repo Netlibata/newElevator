@@ -1,12 +1,9 @@
-package com.example.V1.modle;
+package com.example.V1.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-
-import java.io.Serial;
-import java.time.LocalDateTime;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,50 +11,43 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ * 参数异常记录表，关联系统异常
  * </p>
  *
  * @author Netlibata
- * @since 2025-06-09
+ * @since 2025-06-25
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("data_records")
-public class DataRecords implements Serializable {
+@TableName("parameter_anomalies")
+public class ParameterAnomalies implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键 ID
+     * 参数异常主键ID
      */
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     /**
-     * 生成时间
+     * 关联system_anomalies表的主键ID
      */
-    @TableField("create_date")
-    private LocalDateTime createDate;
+    @TableField("system_anomalies_id")
+    private Integer systemAnomaliesId;
 
     /**
-     * 故障类型
+     * 异常参数名
      */
-    @TableField("type")
-    private String type;
+    @TableField("param_name")
+    private String paramName;
 
     /**
-     * 异常数值
+     * 异常参数值
      */
-    @TableField("e_data")
-    private String eData;
-
-    /**
-     * 异常数据的名字
-     */
-    @TableField("e_name")
-    private String eName;
+    @TableField("param_data")
+    private String paramData;
 
 
 }

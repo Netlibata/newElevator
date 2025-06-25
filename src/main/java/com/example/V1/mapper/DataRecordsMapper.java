@@ -1,15 +1,15 @@
 package com.example.V1.mapper;
 
-import com.example.V1.modle.DataRecords;
+import com.example.V1.entity.DataRecords;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
- *  Mapper 接口
+ * 异常主记录表 Mapper 接口
  * </p>
  *
- * @author 
- * @since 2025-06-09
+ * @author Netlibata
+ * @since 2025-06-25
  */
 public interface DataRecordsMapper extends BaseMapper<DataRecords> {
 
