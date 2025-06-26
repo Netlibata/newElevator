@@ -1,9 +1,9 @@
 package com.example.V1.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import java.time.LocalDateTime;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,43 +11,50 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 参数异常记录表，关联系统异常
+ * 异常数据表
  * </p>
  *
  * @author Netlibata
- * @since 2025-06-25
+ * @since 2025-06-26
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("parameter_anomalies")
-public class ParameterAnomalies implements Serializable {
+@TableName("data_e_table")
+public class DataETable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 参数异常主键ID
+     * 主键，自增
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 关联system_anomalies表的主键ID
+     * 异常生成的时间，自动填入
      */
-    @TableField("system_anomalies_id")
-    private Integer systemAnomaliesId;
+    private LocalDateTime createTime;
 
     /**
-     * 异常参数名
+     * 系统名称
      */
-    @TableField("param_name")
-    private String paramName;
+    private String systemName;
 
     /**
-     * 异常参数值
+     * 子设备名称
      */
-    @TableField("param_data")
-    private String paramData;
+    private String systemSqName;
+
+    /**
+     * 异常数据的名称
+     */
+    private String eName;
+
+    /**
+     * 异常数据内容
+     */
+    private String eData;
 
 
 }

@@ -11,35 +11,45 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 异常主记录表
+ * 维护记录表
  * </p>
  *
  * @author Netlibata
- * @since 2025-06-25
+ * @since 2025-06-26
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("data_records")
-public class DataRecords implements Serializable {
+@TableName("maintain_table")
+public class MaintainTable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键ID，自动增长
+     * 主键，自增
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
-     * 异常类型，默认就是system
+     * 维护时间，自动填入
      */
-    private String type;
+    private LocalDateTime mtTime;
 
     /**
-     * 异常生成时间，自动生成
+     * 维护人员ID
      */
-    private LocalDateTime createDate;
+    private Integer userId;
+
+    /**
+     * 被维护的异常数据ID
+     */
+    private Integer mtDataId;
+
+    /**
+     * 维护状态（0:未维护, 1:已维护）
+     */
+    private Boolean status;
 
 
 }

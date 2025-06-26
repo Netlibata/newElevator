@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 参数异常记录表，关联系统异常 前端控制器
+ * 异常数据表 前端控制器
  * </p>
  *
  * @author Netlibata
- * @since 2025-06-25
+ * @since 2025-06-26
  */
 @RestController
-@RequestMapping("/parameter-anomalies")
-public class ParameterAnomaliesController {
+@RequestMapping("/data-etable")
+public class DataETableController {
 
 }

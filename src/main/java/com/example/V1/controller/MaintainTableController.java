@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 异常主记录表 前端控制器
+ * 维护记录表 前端控制器
  * </p>
  *
  * @author Netlibata
- * @since 2025-06-25
+ * @since 2025-06-26
  */
 @RestController
-@RequestMapping("/data-records")
-public class DataRecordsController {
+@RequestMapping("/maintain-table")
+public class MaintainTableController {
 
 }

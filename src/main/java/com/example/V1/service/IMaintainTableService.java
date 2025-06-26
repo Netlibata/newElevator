@@ -1,0 +1,16 @@
+package com.example.V1.service;
+
+import com.example.V1.entity.MaintainTable;
+import com.baomidou.mybatisplus.extension.service.IService;
+
+/**
+ * <p>
+ * 维护记录表 服务类
+ * </p>
+ *
+ * @author Netlibata
+ * @since 2025-06-26
+ */
+public interface IMaintainTableService extends IService<MaintainTable> {
+
+}
