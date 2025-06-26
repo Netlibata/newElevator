@@ -1,9 +1,11 @@
 package com.example.V1.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import com.example.V1.commont.Result;
+import com.example.V1.entity.DataETable;
+import com.example.V1.service.IDataETableService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -17,4 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/data-etable")
 public class DataETableController {
 
+    @Autowired
+    private IDataETableService dataETableService;
+
+    /**
+     * 异常数据接收接口
+     */
+    @PostMapping("/gain-data")
+    public Result<String> getgainData(@RequestBody DataETable dataETable){
+        return dataETableService.getgainData(dataETable);
+    }
 }

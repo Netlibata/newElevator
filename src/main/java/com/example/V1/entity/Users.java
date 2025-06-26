@@ -1,5 +1,6 @@
 package com.example.V1.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -33,16 +34,19 @@ public class Users implements Serializable {
     /**
      * 人员名字
      */
+    @TableField("user_name")
     private String userName;
 
     /**
      * 人员电话
      */
+    @TableField("user_phone")
     private String userPhone;
 
     /**
      * 人员岗位
      */
+    @TableField("position")
     private String position;
 
 

@@ -28,3 +28,5 @@ mybatis-plus:
         enabled: true
         additional-paths: src/main/java
         exclude: static/**,public/**,templates/**,log/**
+        jackson:
+          property-naming-strategy: SNAKE_CASE

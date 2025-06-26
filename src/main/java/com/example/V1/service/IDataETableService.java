@@ -1,5 +1,6 @@
 package com.example.V1.service;
 
+import com.example.V1.commont.Result;
 import com.example.V1.entity.DataETable;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IDataETableService extends IService<DataETable> {
 
+    //异常数据接收
+    Result<String> getgainData(DataETable dataETable);
 }
