@@ -56,5 +56,10 @@ public class MaintainTable implements Serializable {
     @TableField(value = "status")
     private Boolean status;
 
+    /**
+     * 备注
+     */
+    @TableField(value = "remark")
+    private String remark;
 
 }

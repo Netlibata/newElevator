@@ -1,5 +1,6 @@
 package com.example.V1.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.V1.commont.Result;
 import com.example.V1.entity.DataETable;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -16,4 +17,7 @@ public interface IDataETableService extends IService<DataETable> {
 
     //异常数据接收
     Result<String> getgainData(DataETable dataETable);
+
+    //分页查询异常数据
+    Result<IPage<DataETable>> getErrorData(long current, long size, Long id, String systemName, String systemSqName);
 }

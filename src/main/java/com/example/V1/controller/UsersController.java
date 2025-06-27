@@ -1,6 +1,12 @@
 package com.example.V1.controller;
 
 
+import com.example.V1.commont.Result;
+import com.example.V1.entity.Users;
+import com.example.V1.service.IUsersService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -16,5 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 public class UsersController {
+
+    @Autowired
+    private IUsersService usersService;
+
+    /**
+     * 添加维护人员
+     * @param users
+     * @return
+     */
+    @PostMapping("/add-user")
+    public Result<String> addUser(@RequestBody Users users){
+        return usersService.addUser(users);
+    }
 
 }
