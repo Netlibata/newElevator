@@ -1,5 +1,6 @@
 package com.example.V1.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.V1.commont.Result;
 import com.example.V1.entity.Users;
 import com.example.V1.mapper.UsersMapper;
@@ -32,6 +33,25 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         }
         else{
             return Result.error("添加失败");
+        }
+    }
+
+    /**
+     * 删除人员
+     */
+    @Override
+    public Result<String> deleteUser(Integer id) {
+        try{        LambdaQueryWrapper<Users> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Users::getId, id);
+            boolean remove = this.remove(queryWrapper);
+            if(remove){
+                return Result.success("删除成功");
+            }
+            else{
+                return Result.error("删除失败");
+            }
+        }catch(Exception e){
+            return Result.error("系统异常，出现错误");
         }
     }
 }

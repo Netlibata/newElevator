@@ -28,12 +28,18 @@ public class UsersController {
 
     /**
      * 添加维护人员
-     * @param users
-     * @return
      */
     @PostMapping("/add-user")
     public Result<String> addUser(@RequestBody Users users){
         return usersService.addUser(users);
+    }
+
+    /**
+     * 删除人员
+     */
+    @PostMapping("/delete-user")
+    public Result<String> deleteUser(@RequestBody Integer id){
+        return usersService.deleteUser(id);
     }
 
 }

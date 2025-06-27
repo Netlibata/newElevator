@@ -1,8 +1,10 @@
 package com.example.V1.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.V1.Dto.MaintainTableDTO;
 import com.example.V1.commont.Result;
 import com.example.V1.entity.DataETable;
 import com.example.V1.entity.MaintainTable;
@@ -68,6 +70,40 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
         }catch (Exception e){
             log.error("系统异常，查询失败",e);
             return Result.error("系统异常，查询失败");
+        }
+    }
+
+    /**
+     * 更新维护记录表
+     */
+    @Override
+    public Result<String> updateMaintain(MaintainTableDTO maintainTableDTO) {
+        try{
+            MaintainTable maintainTable = new MaintainTable();
+
+            maintainTable.setStatus(maintainTableDTO.getStatus());
+            maintainTable.setRemark(maintainTableDTO.getRemark());
+            maintainTable.setUserId(maintainTableDTO.getUserId());
+
+            LambdaUpdateWrapper<MaintainTable> updateWrapper = new LambdaUpdateWrapper<>();
+
+            if (maintainTableDTO.getId() != null) {
+                updateWrapper.eq(MaintainTable::getId, maintainTableDTO.getId());
+            } else {
+                return Result.error("ID不能为空");
+            }
+
+            boolean update= this.update(maintainTable,updateWrapper);
+
+            if(update){
+                return Result.success("数据更新成功");
+            }
+            else{
+                return Result.error("数据更新失败");
+            }
+        } catch (Exception e){
+            log.error("系统异常，更新失败",e);
+            return Result.error("系统异常，更新失败");
         }
     }
 }

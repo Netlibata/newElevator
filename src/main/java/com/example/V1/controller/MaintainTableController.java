@@ -2,16 +2,13 @@ package com.example.V1.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.example.V1.Dto.MaintainTableDTO;
 import com.example.V1.commont.Result;
 import com.example.V1.entity.MaintainTable;
 import com.example.V1.service.IMaintainTableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -28,6 +25,7 @@ public class MaintainTableController {
 
     @Autowired
     private IMaintainTableService imaintainTableService;
+
     /**
      * 分页获取维护记录
      */
@@ -39,5 +37,13 @@ public class MaintainTableController {
                                                     @RequestParam(value ="mtDataId",  required = false) Long mtDataId) {
         log.info("current = {},size = {},id = {},userId = {},mtDataId = {}", current, size, id, userId, mtDataId);
         return imaintainTableService.getMaintain(current, size, id, userId, mtDataId);
+    }
+
+    /**
+     * 更新维护记录
+     */
+    @PostMapping("/update-maintain")
+    public Result<String> updateMaintain(@RequestBody MaintainTableDTO maintainTableDTO) {
+        return imaintainTableService.updateMaintain(maintainTableDTO);
     }
 }

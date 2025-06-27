@@ -16,4 +16,7 @@ public interface IUsersService extends IService<Users> {
 
     //添加维修人员
     Result<String> addUser(Users users);
+
+    //删除人员
+    Result<String> deleteUser(Integer id);
 }

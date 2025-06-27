@@ -51,10 +51,10 @@ public class MaintainTable implements Serializable {
     private Integer mtDataId;
 
     /**
-     * 维护状态（0:未维护, 1:已维护）
+     * 维护状态（未维护, 已维护）
      */
     @TableField(value = "status")
-    private Boolean status;
+    private String status;
 
     /**
      * 备注

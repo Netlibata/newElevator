@@ -9,6 +9,7 @@ import com.example.V1.entity.MaintainTable;
 import com.example.V1.mapper.DataETableMapper;
 import com.example.V1.service.IDataETableService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETable> implements IDataETableService {
 
+    @Autowired
+    private MaintainTableServiceImpl maintainTableServicce;
+
     /**
      * 异常数据接收
      */
@@ -33,10 +37,11 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
         log.info("接收到数据：{}", dataETable);
         boolean save = this.save(dataETable);
 
-        /**MaintainTable maintainTable = new MaintainTable();
-        //添加到维护记录表中
-        maintainTable.setMtTime(dataETable.getCreateTime());
-         */
+        MaintainTable maintainTable = new MaintainTable();
+        //添加到维护记录表中异常数据id
+        maintainTable.setMtDataId(dataETable.getId());
+        maintainTableServicce.save(maintainTable);
+
 
         if(save){
             return Result.success("数据添加成功");
