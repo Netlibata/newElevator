@@ -8,5 +8,5 @@ public class MaintainTableDTO {
     private String remark;
     private Integer userId;
     private Integer id;
-
+    private int sum;
 }

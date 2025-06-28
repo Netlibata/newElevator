@@ -62,4 +62,10 @@ public class MaintainTable implements Serializable {
     @TableField(value = "remark")
     private String remark;
 
+    /**
+     * 时间变革次数
+     */
+    @TableField(value = "sum")
+    private int sum;
+
 }

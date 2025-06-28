@@ -3,12 +3,15 @@ package com.example.V1.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.V1.Dto.MaintainTableDTO;
+import com.example.V1.Dto.MaintainWithDataDTO;
 import com.example.V1.commont.Result;
 import com.example.V1.entity.MaintainTable;
 import com.example.V1.service.IMaintainTableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -30,13 +33,14 @@ public class MaintainTableController {
      * 分页获取维护记录
      */
     @GetMapping("/get-maintain")
-    public Result<IPage<MaintainTable>> getMaintain(@RequestParam(defaultValue = "1") long current,
-                                                    @RequestParam(defaultValue = "10") long size,
-                                                    @RequestParam(value ="id",  required = false) Long id,
-                                                    @RequestParam(value ="userId",  required = false) Long userId,
-                                                    @RequestParam(value ="mtDataId",  required = false) Long mtDataId) {
-        log.info("current = {},size = {},id = {},userId = {},mtDataId = {}", current, size, id, userId, mtDataId);
-        return imaintainTableService.getMaintain(current, size, id, userId, mtDataId);
+    public Result<IPage<MaintainWithDataDTO>> getMaintain(@RequestParam(defaultValue = "1") long current,
+                                                          @RequestParam(defaultValue = "10") long size,
+                                                          @RequestParam(value ="id",  required = false) Long id,
+                                                          @RequestParam(value ="userId",  required = false) Long userId,
+                                                          @RequestParam(value ="systemName",  required = false) String systemName,
+                                                          @RequestParam(value ="mtTime",  required = false) LocalDateTime mtTime) {
+        log.info("current = {},size = {},id = {},userId = {},mtDataId = {}", current, size, id, userId, systemName);
+        return imaintainTableService.getMaintain(current, size, id, userId, systemName,mtTime);
     }
 
     /**

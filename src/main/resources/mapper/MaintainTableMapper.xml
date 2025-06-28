@@ -2,4 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.V1.mapper.MaintainTableMapper">
 
+    <select id="getMaintainWithJoin" resultType="com.example.V1.Dto.MaintainWithDataDTO">
+        SELECT m.id, m.status, m.remark, m.user_id AS userId,
+        d.system_name AS systemName,
+        m.mt_time AS mtTime
+        FROM maintain_table m
+        LEFT JOIN data_e_table d ON m.mt_data_id = d.id
+        <where>
+            <if test="id != null">
+                AND m.id = #{id}
+            </if>
+            <if test="userId != null">
+                AND m.user_id LIKE CONCAT('%', #{userId}, '%')
+            </if>
+            <if test="systemName != null and systemName != ''">
+                AND d.system_name LIKE CONCAT('%', #{systemName}, '%')
+            </if>
+        </where>
+        ORDER BY m.mt_time DESC
+    </select>
+
+
 </mapper>

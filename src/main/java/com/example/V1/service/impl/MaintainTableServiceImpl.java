@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.V1.Dto.MaintainTableDTO;
+import com.example.V1.Dto.MaintainWithDataDTO;
 import com.example.V1.commont.Result;
 import com.example.V1.entity.DataETable;
 import com.example.V1.entity.MaintainTable;
@@ -12,7 +13,10 @@ import com.example.V1.mapper.MaintainTableMapper;
 import com.example.V1.service.IMaintainTableService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -26,84 +30,93 @@ import org.springframework.stereotype.Service;
 @Service
 public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, MaintainTable> implements IMaintainTableService {
 
+    @Autowired
+    private MaintainTableMapper maintainMapper;
+
     /**
      * 分页查询维护记录
      */
     @Override
-    public Result<IPage<MaintainTable>> getMaintain(long current,
-                              long size,
-                              Long id,
-                              Long userId,
-                              Long mtDataId) {
-        try{
-            //创建分页对象
-            Page<MaintainTable> page = new Page<>(current, size);
+    public Result<IPage<MaintainWithDataDTO>> getMaintain(long current,
+                                                          long size,
+                                                          Long id,
+                                                          Long userId,
+                                                          String systemName,
+                                                          LocalDateTime mtTime) {
+        try {
+            // 创建分页对象
+            Page<MaintainWithDataDTO> page = new Page<>(current, size);
 
-            // 构建查询条件
-            LambdaQueryWrapper<MaintainTable> queryWrapper = new LambdaQueryWrapper<>();
+            // 调用联表分页查询 Mapper 方法
+            IPage<MaintainWithDataDTO> pageData = maintainMapper.getMaintainWithJoin(page, id, userId, systemName,mtTime);
 
-            // 如果指定了题库ID，则按题库ID查询
-            if (id != null ) {
-                queryWrapper.eq(MaintainTable::getId, id);
-            }
-            if(userId != null ){
-                queryWrapper.like(MaintainTable::getUserId, userId);
-            }
-            if(mtDataId != null){
-                queryWrapper.like(MaintainTable::getMtDataId, mtDataId);
-            }
-
-            // 按更新时间降序排序
-            queryWrapper.orderByDesc(MaintainTable::getMtTime);
-
-            IPage<MaintainTable> pageData = this.page(page, queryWrapper);
-
-            // 如果没有查询到数据，返回空的分页对象
+            // 判空处理
             if (pageData == null || pageData.getRecords().isEmpty()) {
-                log.info("未查询到相关题目数据: 当前页={}, 每页大小={}", current, size);
+                log.info("未查询到相关维护数据: 当前页={}, 每页大小={}", current, size);
                 return Result.success("未查询到相关数据", pageData);
             }
 
-            log.info("分页查询题目成功: 当前页={}, 每页大小={}, 总记录数={}, 总页数={}",
+
+            // 正常返回
+            log.info("分页查询维护记录成功: 当前页={}, 每页大小={}, 总记录数={}, 总页数={}",
                     current, size, pageData.getTotal(), pageData.getPages());
             return Result.success("查询成功", pageData);
-        }catch (Exception e){
-            log.error("系统异常，查询失败",e);
+        } catch (Exception e) {
+            log.error("系统异常，查询失败", e);
             return Result.error("系统异常，查询失败");
         }
     }
+
 
     /**
      * 更新维护记录表
      */
     @Override
     public Result<String> updateMaintain(MaintainTableDTO maintainTableDTO) {
-        try{
-            MaintainTable maintainTable = new MaintainTable();
+        try {
+            if (maintainTableDTO.getId() == null) {
+                return Result.error("ID不能为空");
+            }
 
+            log.info("前端传入id = {},status = {},sum = {}", maintainTableDTO.getId(), maintainTableDTO.getStatus(), maintainTableDTO.getSum());
+
+            LambdaUpdateWrapper<MaintainTable> updateWrapper = new LambdaUpdateWrapper<>();
+            updateWrapper.eq(MaintainTable::getId, maintainTableDTO.getId())
+                    .eq(MaintainTable::getStatus, "未维护")
+                    .eq(MaintainTable::getSum, 0)
+                    .set(MaintainTable::getSum,1);
+
+
+            MaintainTable maintainTable = new MaintainTable();
             maintainTable.setStatus(maintainTableDTO.getStatus());
             maintainTable.setRemark(maintainTableDTO.getRemark());
             maintainTable.setUserId(maintainTableDTO.getUserId());
 
-            LambdaUpdateWrapper<MaintainTable> updateWrapper = new LambdaUpdateWrapper<>();
+            boolean update = this.update(maintainTable, updateWrapper);
 
-            if (maintainTableDTO.getId() != null) {
-                updateWrapper.eq(MaintainTable::getId, maintainTableDTO.getId());
-            } else {
-                return Result.error("ID不能为空");
+            // 先获取旧的sum
+            int oldSum = this.getById(maintainTableDTO.getId()).getSum();
+            // 设置新sum值为1
+            maintainTable.setSum(1);
+            // 如果旧sum是0，就设置时间
+            if (oldSum == 0) {
+                maintainTable.setMtTime(LocalDateTime.now());
             }
 
-            boolean update= this.update(maintainTable,updateWrapper);
 
-            if(update){
+            log.info("后端存入后id = {},status = {},sum = {},update =  {}", maintainTable.getId(), maintainTable.getStatus(), maintainTable.getSum(), update);
+
+            if (update) {
+                log.info("数据更新成功");
                 return Result.success("数据更新成功");
+            } else {
+                log.info("数据更新失败，条件未匹配或无数据");
+                return Result.error("数据更新失败，条件未匹配或无数据");
             }
-            else{
-                return Result.error("数据更新失败");
-            }
-        } catch (Exception e){
-            log.error("系统异常，更新失败",e);
+        } catch (Exception e) {
+            log.error("系统异常，更新失败", e);
             return Result.error("系统异常，更新失败");
         }
     }
+
 }
