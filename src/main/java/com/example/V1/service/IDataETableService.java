@@ -20,4 +20,7 @@ public interface IDataETableService extends IService<DataETable> {
 
     //分页查询异常数据
     Result<IPage<DataETable>> getErrorData(long current, long size, Long id, String systemName, String systemSqName);
+
+    //异常数据发送给AI分析
+    Result<String> sendDataToAI(DataETable dataETable);
 }

@@ -1,16 +1,24 @@
 spring:
-  application: ElectorAI
+  application:
+    name: ElectorAI
   datasource:
-    url: jdbc:mysql://10.181.198.148:3306/elevator?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
-    username: user
+   # url: jdbc:mysql://10.181.198.148:3306/elevator?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+   # username: user
+   # password:
+   # driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:sqlite:SQL/SQLelevator.db
+    driver-class-name: org.sqlite.JDBC
+    username: root
     password:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: never
+
 
   ai:
-    url: https://api.deepseek.com/v1/chat/completions
-    key: sk-fd837390c81c48e48a7de88916c233e0
-    chat:
-      options:
+    openai:
+      api-key: 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
+      chat-model:
         model: deepseek-chat
 
 server:
@@ -20,6 +28,9 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: AUTO
   mapper-locations: classpath*:mapper/*.xml
 
   spring:

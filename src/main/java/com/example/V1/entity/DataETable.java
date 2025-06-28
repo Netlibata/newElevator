@@ -29,7 +29,7 @@ public class DataETable implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键，自增
+     * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;

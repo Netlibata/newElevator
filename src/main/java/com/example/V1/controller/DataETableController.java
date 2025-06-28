@@ -46,4 +46,13 @@ public class DataETableController {
         log.info("current = {},size = {},id = {},systemName = {}，systemSqName = {}", current, size, id, systemName, systemSqName);
         return dataETableService.getErrorData(current,size,id,systemName,systemSqName);
     }
+
+    /**
+     * 数据发送给AI分析
+     */
+    @PostMapping("/send-data-to-ai")
+    public Result<String> sendDataToAI(@RequestBody DataETable dataETable){
+        //log.info("dataETable = {}", dataETable);
+        return dataETableService.sendDataToAI(dataETable);
+    }
 }
