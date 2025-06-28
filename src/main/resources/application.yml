@@ -1,5 +1,6 @@
 spring:
-  application: ElectorAI
+  application:
+    name: ElectorAI
   datasource:
     url: jdbc:mysql://10.181.198.148:3306/elevator?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
     username: user
@@ -7,10 +8,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   ai:
-    url: https://api.deepseek.com/v1/chat/completions
-    key: sk-fd837390c81c48e48a7de88916c233e0
-    chat:
-      options:
+    openai:
+      api-key: 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
+      chat-model:
         model: deepseek-chat
 
 server:
