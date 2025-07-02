@@ -17,8 +17,8 @@ spring:
 
   ai:
     openai:
-      api-key: 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
-      chat-model:
+      api-key:
+        chat-model:
         model: deepseek-chat
 
 server:
