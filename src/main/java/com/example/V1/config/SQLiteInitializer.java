@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+//识别数据库文件实现自动填充
 @Slf4j
 @Component
 public class SQLiteInitializer implements CommandLineRunner {
