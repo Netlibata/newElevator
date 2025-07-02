@@ -78,33 +78,39 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
                 return Result.error("ID不能为空");
             }
 
-            log.info("前端传入id = {},status = {},sum = {}", maintainTableDTO.getId(), maintainTableDTO.getStatus(), maintainTableDTO.getSum());
+            // 先查询数据库中的旧记录
+            MaintainTable oldRecord = this.getById(maintainTableDTO.getId());
+            if (oldRecord == null) {
+                return Result.error("记录不存在");
+            }
 
+            log.info("前端传入id = {}, status = {}, sum = {}", maintainTableDTO.getId(), maintainTableDTO.getStatus(), maintainTableDTO.getSum());
+
+            // 构造更新条件，确保只更新满足条件的记录
             LambdaUpdateWrapper<MaintainTable> updateWrapper = new LambdaUpdateWrapper<>();
             updateWrapper.eq(MaintainTable::getId, maintainTableDTO.getId())
                     .eq(MaintainTable::getStatus, "未维护")
-                    .eq(MaintainTable::getSum, 0)
-                    .set(MaintainTable::getSum,1);
+                    .eq(MaintainTable::getSum, 0);
 
+            // 构建要更新的对象
+            MaintainTable updateRecord = new MaintainTable();
+            updateRecord.setStatus(maintainTableDTO.getStatus());
+            updateRecord.setRemark(maintainTableDTO.getRemark());
+            updateRecord.setUserId(maintainTableDTO.getUserId());
 
-            MaintainTable maintainTable = new MaintainTable();
-            maintainTable.setStatus(maintainTableDTO.getStatus());
-            maintainTable.setRemark(maintainTableDTO.getRemark());
-            maintainTable.setUserId(maintainTableDTO.getUserId());
-
-            boolean update = this.update(maintainTable, updateWrapper);
-
-            // 先获取旧的sum
-            int oldSum = this.getById(maintainTableDTO.getId()).getSum();
-            // 设置新sum值为1
-            maintainTable.setSum(1);
-            // 如果旧sum是0，就设置时间
-            if (oldSum == 0) {
-                maintainTable.setMtTime(LocalDateTime.now());
+            // 如果旧sum是0，则设置新sum为1并更新时间
+            if (oldRecord.getSum() == 0) {
+                updateRecord.setSum(1);
+                updateRecord.setMtTime(LocalDateTime.now());
+            } else {
+                // 否则保持旧sum，避免无意覆盖
+                updateRecord.setSum(oldRecord.getSum());
             }
 
+            // 执行更新
+            boolean update = this.update(updateRecord, updateWrapper);
 
-            log.info("后端存入后id = {},status = {},sum = {},update =  {}", maintainTable.getId(), maintainTable.getStatus(), maintainTable.getSum(), update);
+            log.info("后端存入后 id = {}, status = {}, sum = {}, update = {}", maintainTableDTO.getId(), updateRecord.getStatus(), updateRecord.getSum(), update);
 
             if (update) {
                 log.info("数据更新成功");
@@ -118,5 +124,6 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
             return Result.error("系统异常，更新失败");
         }
     }
+
 
 }

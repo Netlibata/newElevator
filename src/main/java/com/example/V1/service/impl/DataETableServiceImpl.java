@@ -96,7 +96,7 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
     /**
      * 分页查询异常信息
      */
-    @Override
+   @Override
     public Result<IPage<DataETable>> getErrorData(long current,
                                                   long size,
                                                   Long id,

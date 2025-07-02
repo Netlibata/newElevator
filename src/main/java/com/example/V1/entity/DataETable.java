@@ -1,9 +1,7 @@
 package com.example.V1.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -31,13 +29,13 @@ public class DataETable implements Serializable {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Integer id;
 
     /**
      * 异常生成的时间，自动填入
      */
-    @TableField("create_time")
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /**
