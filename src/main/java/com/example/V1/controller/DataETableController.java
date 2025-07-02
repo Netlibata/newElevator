@@ -52,7 +52,6 @@ public class DataETableController {
      */
     @PostMapping("/send-data-to-ai")
     public Result<String> sendDataToAI(@RequestBody DataETable dataETable){
-        //log.info("dataETable = {}", dataETable);
         return dataETableService.sendDataToAI(dataETable);
     }
 }
