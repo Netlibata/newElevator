@@ -5,11 +5,9 @@ import com.example.V1.commont.Result;
 import com.example.V1.entity.Users;
 import com.example.V1.service.IUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 /**
  * <p>
@@ -42,4 +40,20 @@ public class UsersController {
         return usersService.deleteUser(id);
     }
 
+    /**
+     * 获取维护人员
+     */
+    @GetMapping("/get-user")
+    public Result<List<Users>> getUser(@RequestParam(value ="id",  required = false) Integer id,
+                                       @RequestParam(value ="userName", required = false)String userName){
+        return usersService.getUser(id,userName);
+    }
+
+    /**
+     * 修改人员接口
+     */
+    @PostMapping("/update-user")
+    public Result<String> updateUser(@RequestBody Users users){
+        return usersService.updateUser(users);
+    }
 }

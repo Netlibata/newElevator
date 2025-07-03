@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.V1.commont.Result;
+import com.example.V1.config.KnowledgeLoader;
 import com.example.V1.config.buildPromptWithKnowleConfig;
-import com.example.V1.config.loadKnowledgeBase;
 import com.example.V1.entity.DataETable;
 import com.example.V1.entity.MaintainTable;
 import com.example.V1.entity.PromptKnowledge;
@@ -33,6 +33,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETable> implements IDataETableService {
+
+
 
     @Autowired
     private MaintainTableServiceImpl maintainTableServicce;
@@ -149,53 +151,35 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
     @Override
     public Result<String> sendDataToAI(DataETable dataETable) {
         try {
+            // 加载知识库 JSON 文件
+            List<PromptKnowledge> knowledgeList = KnowledgeLoader.loadKnowledgeFromJson();
 
-            // AI 服务
-            // 构建 AI 提示词
-            String prompt = "你是一名经验丰富的电梯维修工程师，现在收到了一组电梯上传的异常运行数据。请根据这些数据分析可能的故障类型、导致的原因，并提供初步维修建议。\n" +
-                    "请以 JSON 格式返回，结构如下：\n" +
-                    "{\n" +
-                    "   \"message\": \"通过异常数据得知[故障类型]，分析[故障原因]，建议[维修建议]\"\n" +
-                    "}\n\n" +
-                    "以下是电梯上传的异常数据：\n" +
-                    new ObjectMapper().writeValueAsString(dataETable);
+            // 构建提示词
+            String prompt = new buildPromptWithKnowleConfig().buildPromptWithKnowledge(knowledgeList, dataETable);
 
-            // 调用 AI 进行分析
+            // 调用 AI
             Object aiResponseObj = openAiChatModel.call(prompt);
             String aiResponse = aiResponseObj.toString();
             log.debug("AI原始响应：{}", aiResponse);
 
-            // 去除多余的代码块标记
+            // 清理多余格式
             aiResponse = aiResponse.replaceAll("```json", "").replaceAll("```", "").trim();
 
-            // 检查响应是否是有效的 JSON 格式
             if (aiResponse == null || aiResponse.isEmpty() || !aiResponse.startsWith("{") || !aiResponse.endsWith("}")) {
                 return Result.error("AI 返回的不是有效的 JSON 格式: " + aiResponse);
             }
 
-            // 解析 AI 响应结果
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode responseJson = objectMapper.readTree(aiResponse);
+            String message = responseJson.get("message").asText().replace("\\n", "\n");
 
-            // 提取 "message" 字段并替换 \n 为换行符
-            String message = responseJson.get("message").asText();
-
-            // 如果 message 包含 \\n 字符，替换为换行符
-            message = message.replace("\\n", "\n");
-
-            // 创建新的 JSON 结果
             ObjectNode updatedResponseJson = objectMapper.createObjectNode();
             updatedResponseJson.put("message", message);
+            return Result.success(updatedResponseJson.toString());
 
-            // 将响应结果转化为字符串
-            String jsonResponse = updatedResponseJson.toString();
-
-            // 返回 AI 分析建议的 JSON 数据
-            return Result.success(jsonResponse);
-
-        }catch(Exception e){
-            log.error("系统异常，发送数据失败",e);
-            return Result.error("系统异常，分析失败 ");
+        } catch (Exception e) {
+            log.error("系统异常，分析失败", e);
+            return Result.error("系统异常，分析失败");
         }
     }
 }

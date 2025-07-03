@@ -18,7 +18,7 @@ public class buildPromptWithKnowleConfig {
         }
         sb.append("\n当前上传的电梯异常数据为：\n");
         sb.append(new ObjectMapper().writeValueAsString(data)).append("\n");
-        sb.append("请根据上面知识和异常数据，判断故障类型、原因、维修建议，并判断是否弹窗报警（1=弹窗，0=不弹窗）。\n");
+        sb.append("请根据上面知识和异常数据，详细判断故障类型、详细原因、详细维修建议，并判断是否弹窗报警（1=弹窗，0=不弹窗）。\n");
         sb.append("请以JSON格式返回，格式如下：\n");
         sb.append("{\"message\": \"通过异常数据得知[故障类型]，分析[原因]，建议[维修建议]，[1/0]\"}");
         return sb.toString();
