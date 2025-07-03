@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.V1.commont.Result;
+import com.example.V1.config.buildPromptWithKnowleConfig;
+import com.example.V1.config.loadKnowledgeBase;
 import com.example.V1.entity.DataETable;
 import com.example.V1.entity.MaintainTable;
+import com.example.V1.entity.PromptKnowledge;
 import com.example.V1.mapper.DataETableMapper;
 import com.example.V1.service.IDataETableService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.openai.OpenAiChatModel;
+
+import java.util.List;
 
 /**
  * <p>
@@ -143,21 +148,18 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
 
     @Override
     public Result<String> sendDataToAI(DataETable dataETable) {
-        try{
+        try {
 
-
-            System.out.println("我来啦我来啦我来啦我来啦我访问到啦");
-            // AI 服务（弹窗的AI）
+            // AI 服务
             // 构建 AI 提示词
-            String prompt = "你是一名经验丰富的电梯维修工程师，现在收到了一组电梯上传的异常运行数据。" +
-                    "请根据这些数据分析可能的故障类型、导致的原因，并提供初步维修建议。" +
-                    "请根据异常严重程度判断是否需要弹窗报警（1 表示弹窗，0 表示不弹窗）。\n\n" +
+            String prompt = "你是一名经验丰富的电梯维修工程师，现在收到了一组电梯上传的异常运行数据。请根据这些数据分析可能的故障类型、导致的原因，并提供初步维修建议。\n" +
                     "请以 JSON 格式返回，结构如下：\n" +
                     "{\n" +
-                    "   \"message\": \"通过异常数据得知[故障类型]，分析[故障原因]，建议[维修建议]，[1/0]\"\n" +
+                    "   \"message\": \"通过异常数据得知[故障类型]，分析[故障原因]，建议[维修建议]\"\n" +
                     "}\n\n" +
                     "以下是电梯上传的异常数据：\n" +
                     new ObjectMapper().writeValueAsString(dataETable);
+
             // 调用 AI 进行分析
             Object aiResponseObj = openAiChatModel.call(prompt);
             String aiResponse = aiResponseObj.toString();
