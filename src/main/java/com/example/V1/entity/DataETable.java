@@ -62,7 +62,7 @@ public class DataETable implements Serializable {
      */
     @JsonProperty("eData")
     @TableField("e_data")
-    private double eData;
+    private String eData;
 
 
 }
