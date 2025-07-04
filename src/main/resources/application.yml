@@ -14,9 +14,11 @@ spring:
 
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY}
+      api-key: ${key}
+      base-url: https://api.deepseek.com
       chat:
-        model: DeepSeek-R1-Distill-Qwen-7B(Free)
+        options:
+          model: deepseek-chat
 
 server:
   port: 8080

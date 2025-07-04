@@ -6,13 +6,12 @@ import org.springframework.context.annotation.Configuration;
 
 //AI秘钥配置
 @Configuration
+
 public class OpenAiConfig {
-
-
     @Bean
     public String openAiApiKey() {
         Dotenv dotenv = Dotenv.load();
-        return dotenv.get("OPENAI_API_KEY");
+        return dotenv.get("key");
     }
 
 }

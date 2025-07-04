@@ -16,7 +16,9 @@ public class NewElevatorApplication {
     public static void main(String[] args) {
         // 自动从项目根目录加载 `.env` 文件
         Dotenv dotenv = Dotenv.load();
-        String apiKey = dotenv.get("OPENAI_API_KEY");
+        String apiKey = dotenv.get("key");
+
+        System.out.println("当前读取的key是: " + apiKey);
 
         SpringApplication.run(NewElevatorApplication.class, args);
     }

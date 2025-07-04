@@ -15,10 +15,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.openai.OpenAiChatModel;
+
 
 import java.util.List;
 
@@ -40,7 +41,9 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
     private MaintainTableServiceImpl maintainTableServicce;
 
     @Autowired
-    private OpenAiChatModel openAiChatModel;
+    private OpenAiChatModel knowledgeLoader;
+
+
 
     /**
      * 异常数据接收
@@ -158,7 +161,7 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
             String prompt = new buildPromptWithKnowleConfig().buildPromptWithKnowledge(knowledgeList, dataETable);
 
             // 调用 AI
-            Object aiResponseObj = openAiChatModel.call(prompt);
+            Object aiResponseObj = knowledgeLoader.call(prompt);
             String aiResponse = aiResponseObj.toString();
             log.debug("AI原始响应：{}", aiResponse);
 
