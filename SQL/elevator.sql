@@ -7,26 +7,29 @@ CREATE TABLE IF NOT EXISTS data_e_table (
   system_name TEXT NOT NULL,
   system_sq_name TEXT NOT NULL,
   e_name TEXT NOT NULL,
-  e_data REAL NOT NULL
+  e_data REAL NOT NULL,
+  ai_result TEXT NULL,
+  ai_code INTEGER NULL,
+  ai_severity TEXT NULL
 );
 
 -- ----------------------------
 -- Records of data_e_table
 -- ----------------------------
 INSERT INTO data_e_table
-SELECT 17, '2025-06-28 11:33:39', '曳引系统', '设备名字', '测试一下维护记录', 97.58
+SELECT 17, '2025-06-28 11:33:39', '曳引系统', '设备名字', '测试一下维护记录', 97.58, NULL, NULL, NULL
 WHERE NOT EXISTS (SELECT 1 FROM data_e_table WHERE id = 17);
 INSERT INTO data_e_table
-SELECT 18, '2025-06-28 12:20:24', '门系统', '设备名字', '测试一下维护记录', 98.88
+SELECT 18, '2025-06-28 12:20:24', '门系统', '设备名字', '测试一下维护记录', 98.88, NULL, NULL, NULL
 WHERE NOT EXISTS (SELECT 1 FROM data_e_table WHERE id = 18);
 INSERT INTO data_e_table
-SELECT 19, '2025-06-28 14:11:46', '门系统', '设备名字', '测试一下维护记录', 98.88
+SELECT 19, '2025-06-28 14:11:46', '门系统', '设备名字', '测试一下维护记录', 98.88, NULL, NULL, NULL
 WHERE NOT EXISTS (SELECT 1 FROM data_e_table WHERE id = 19);
 INSERT INTO data_e_table
-SELECT 20, '2025-06-28 14:12:47', '曳引系统', '设备名字', '测试时间次数', 98.88
+SELECT 20, '2025-06-28 14:12:47', '曳引系统', '设备名字', '测试时间次数', 98.88, NULL, NULL, NULL
 WHERE NOT EXISTS (SELECT 1 FROM data_e_table WHERE id = 20);
 INSERT INTO data_e_table
-SELECT 21, '2025-06-28 15:43:21', '曳引系统', '设备名字', '测试数据库', 98.88
+SELECT 21, '2025-06-28 15:43:21', '曳引系统', '设备名字', '测试数据库', 98.88, NULL, NULL, NULL
 WHERE NOT EXISTS (SELECT 1 FROM data_e_table WHERE id = 21);
 
 -- ----------------------------

@@ -42,12 +42,14 @@ public class DataETable implements Serializable {
      * 系统名称
      */
     @TableField("system_name")
+    @JsonProperty("systemName")
     private String systemName;
 
     /**
      * 子设备名称
      */
     @TableField("system_sq_name")
+    @JsonProperty("systemSqName")
     private String systemSqName;
 
     /**
@@ -64,5 +66,22 @@ public class DataETable implements Serializable {
     @TableField("e_data")
     private String eData;
 
+    /**
+     * AI分析结果
+     */
+    @TableField("ai_result")
+    private String aiResult;
+
+    /**
+     * AI分析结果代码（0=警告，1=严重故障）
+     */
+    @TableField("ai_code")
+    private Integer aiCode;
+
+    /**
+     * AI分析严重程度描述
+     */
+    @TableField("ai_severity")
+    private String aiSeverity;
 
 }
