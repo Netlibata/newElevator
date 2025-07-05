@@ -1,10 +1,15 @@
 package com.example.V1.Dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * 创建查询维护记录表的插入对象
+ */
 @Getter
+@Setter
 public class MaintainWithDataDTO {
     // 维护ID
     private Integer id;

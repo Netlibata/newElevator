@@ -2,7 +2,6 @@ package com.example.V1.config;
 
 import com.example.V1.entity.PromptKnowledge;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;

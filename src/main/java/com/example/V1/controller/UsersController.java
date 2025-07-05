@@ -4,6 +4,7 @@ package com.example.V1.controller;
 import com.example.V1.commont.Result;
 import com.example.V1.entity.Users;
 import com.example.V1.service.IUsersService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.List;
  * @author Netlibata
  * @since 2025-06-26
  */
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UsersController {
@@ -29,6 +31,8 @@ public class UsersController {
      */
     @PostMapping("/add-user")
     public Result<String> addUser(@RequestBody Users users){
+        log.info("前端接收的 JSON：{}", users);
+
         return usersService.addUser(users);
     }
 

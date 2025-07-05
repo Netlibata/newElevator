@@ -72,6 +72,7 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
     @Override
     public Result<String> updateMaintain(MaintainTableDTO maintainTableDTO) {
         try {
+
             if (maintainTableDTO.getId() == null) {
                 return Result.error("ID不能为空");
             }
@@ -82,7 +83,7 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
                 return Result.error("记录不存在");
             }
 
-            log.info("前端传入id = {}, status = {}, sum = {}", maintainTableDTO.getId(), maintainTableDTO.getStatus(), maintainTableDTO.getSum());
+            log.info("前端传入id = {}, status = {}, sum = {},userId = {}", maintainTableDTO.getId(), maintainTableDTO.getStatus(), maintainTableDTO.getSum(), maintainTableDTO.getUserId());
 
             // 构造更新条件，确保只更新满足条件的记录
             LambdaUpdateWrapper<MaintainTable> updateWrapper = new LambdaUpdateWrapper<>();
@@ -108,7 +109,7 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
             // 执行更新
             boolean update = this.update(updateRecord, updateWrapper);
 
-            log.info("后端存入后 id = {}, status = {}, sum = {}, update = {}", maintainTableDTO.getId(), updateRecord.getStatus(), updateRecord.getSum(), update);
+            log.info("后端存入后 id = {}, status = {}, sum = {}, update = {},userId = {}", maintainTableDTO.getId(), updateRecord.getStatus(), updateRecord.getSum(), update, maintainTableDTO.getUserId());
 
             if (update) {
                 log.info("数据更新成功");
@@ -122,6 +123,4 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
             return Result.error("系统异常，更新失败");
         }
     }
-
-
 }

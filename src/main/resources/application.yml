@@ -9,16 +9,21 @@ spring:
   sql:
     init:
       mode: never
-  config:
-    import: "optional:file:.env"
 
   ai:
     openai:
-      api-key: ${key}
+      api-key: skhahahahahah
       base-url: https://api.deepseek.com
       chat:
         options:
           model: deepseek-chat
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      exclude: static/**,public/**,templates/**,log/**
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 
 server:
   port: 8080
@@ -31,12 +36,3 @@ mybatis-plus:
     db-config:
       id-type: AUTO
   mapper-locations: classpath*:mapper/*.xml
-
-  spring:
-    devtools:
-      restart:
-        enabled: true
-        additional-paths: src/main/java
-        exclude: static/**,public/**,templates/**,log/**
-        jackson:
-          property-naming-strategy: SNAKE_CASE

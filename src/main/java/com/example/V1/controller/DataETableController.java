@@ -26,7 +26,7 @@ public class DataETableController {
     private IDataETableService dataETableService;
 
     /**
-     * 异常数据接收接口
+     * 异常数据接收接口，AI分析并存储
      */
     @PostMapping("/gain-data")
     public Result<String> getgainData(@RequestBody DataETable dataETable){
@@ -45,13 +45,5 @@ public class DataETableController {
             @RequestParam(value ="systemSqName",  required = false) String systemSqName){
         log.info("current = {},size = {},id = {},systemName = {}，systemSqName = {}", current, size, id, systemName, systemSqName);
         return dataETableService.getErrorData(current,size,id,systemName,systemSqName);
-    }
-
-    /**
-     * 数据发送给AI分析
-     */
-    @PostMapping("/send-data-to-ai")
-    public Result<String> sendDataToAI(@RequestBody DataETable dataETable){
-        return dataETableService.sendDataToAI(dataETable);
     }
 }

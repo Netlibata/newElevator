@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -34,18 +36,21 @@ public class MaintainTable implements Serializable {
      * 维护时间，自动填入
      */
     @TableField(value = "mt_time", fill = FieldFill.INSERT)
+    @JsonProperty("mtTime")
     private LocalDateTime mtTime;
 
     /**
      * 维护人员ID
      */
     @TableField(value = "user_id")
+    @JsonProperty("userId")
     private Integer userId;
 
     /**
      * 被维护的异常数据ID
      */
     @TableField(value = "mt_data_id")
+    @JsonProperty("mtDataId")
     private Integer mtDataId;
 
     /**

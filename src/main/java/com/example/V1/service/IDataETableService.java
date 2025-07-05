@@ -15,12 +15,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IDataETableService extends IService<DataETable> {
 
-    //异常数据接收
+    //异常数据接收，AI分析存储
     Result<String> getgainData(DataETable dataETable);
 
     //分页查询异常数据
     Result<IPage<DataETable>> getErrorData(long current, long size, Long id, String systemName, String systemSqName);
 
-    //异常数据发送给AI分析
-    Result<String> sendDataToAI(DataETable dataETable);
 }

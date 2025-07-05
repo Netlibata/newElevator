@@ -3,9 +3,11 @@ package com.example.V1.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.V1.Dto.DataETableForAiDTO;
 import com.example.V1.commont.Result;
 import com.example.V1.config.KnowledgeLoader;
 import com.example.V1.config.buildPromptWithKnowleConfig;
+import com.example.V1.entity.AiTable;
 import com.example.V1.entity.DataETable;
 import com.example.V1.entity.MaintainTable;
 import com.example.V1.entity.PromptKnowledge;
@@ -20,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
-
 import java.util.List;
+
 
 /**
  * <p>
@@ -38,70 +40,104 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
 
 
     @Autowired
-    private MaintainTableServiceImpl maintainTableServicce;
+    private MaintainTableServiceImpl maintainTableService;
+
+    @Autowired
+    private AiTableServiceImpl aiTableService;
 
     @Autowired
     private OpenAiChatModel knowledgeLoader;
 
 
-
     /**
-     * 异常数据接收
+     * 异常数据接收，AI分析并存储（AI失败也存）
      */
     public Result<String> getgainData(DataETable dataETable) {
         try {
-            //打印Id
-            log.info("接收到的数据Id为：{}", dataETable.getId());
-            //添加数据到数据库中
-            log.info("接收到数据：{}", dataETable);
-            boolean save = this.save(dataETable);
-
-            MaintainTable maintainTable = new MaintainTable();
-            //添加到维护记录表中异常数据id
-            maintainTable.setMtDataId(dataETable.getId());
-            maintainTableServicce.save(maintainTable);
-
-            // 如果 save 失败，返回错误信息
-            if (!save) {
-                return Result.error("数据添加失败");
+            // 1. 设置默认字段
+            if (dataETable.getSystemName() == null || dataETable.getSystemName().isEmpty()) {
+                dataETable.setSystemName("未知系统");
             }
-            return Result.success("数据添加成功");
+            if (dataETable.getSystemSqName() == null || dataETable.getSystemSqName().isEmpty()) {
+                dataETable.setSystemSqName("未知组件");
+            }
+
+            // 2. 保存异常数据
+            boolean saved = this.save(dataETable);
+            if (!saved || dataETable.getId() == null) {
+                return Result.error("异常数据保存失败");
+            }
+
+            //在维护表中插入异常表的id
+            maintainTableService.save(new MaintainTable().setMtDataId(dataETable.getId()));
+
+            Integer errorId = dataETable.getId();
+
+            // 3. 构建 AI 输入数据
+            DataETableForAiDTO dataForAI = new DataETableForAiDTO();
+            dataForAI.setSystemName(dataETable.getSystemName());
+            dataForAI.setSystemSqName(dataETable.getSystemSqName());
+            dataForAI.setEName(dataETable.getEName());
+            dataForAI.setESqName(dataETable.getEData());
+
+            // 4. 构建提示词
+            List<PromptKnowledge> knowledgeList = KnowledgeLoader.loadKnowledgeFromJson();
+            String prompt = new buildPromptWithKnowleConfig().buildPromptWithKnowledge(knowledgeList, dataForAI);
+
+            // 5. 调用 AI 并处理响应
+            String message = "AI响应异常";
+            int code = 0;
+            String severity = "未知";
+
+            try {
+                Object aiResponseObj = knowledgeLoader.call(prompt);
+                String aiResponse = aiResponseObj.toString();
+
+                int jsonStart = aiResponse.indexOf("{");
+                int jsonEnd = aiResponse.lastIndexOf("}");
+                if (jsonStart >= 0 && jsonEnd > jsonStart) {
+                    aiResponse = aiResponse.substring(jsonStart, jsonEnd + 1);
+                } else {
+                    aiResponse = aiResponse.replaceAll("```json", "").replaceAll("```", "").trim();
+                }
+
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode jsonNode = mapper.readTree(aiResponse);
+                message = jsonNode.get("message").asText().replace("\\n", "\n");
+                code = jsonNode.has("code") ? jsonNode.get("code").asInt() : 0;
+                severity = code == 1 ? "严重故障" : "警告";
+
+            } catch (Exception aiEx) {
+                log.warn("AI解析失败，使用默认值: {}", aiEx.getMessage());
+            }
+
+            // 6. 保存AI结果
+            AiTable aiTable = new AiTable();
+            aiTable.setEId(errorId);
+            aiTable.setAiResult(message);
+            aiTable.setAiCode(code);
+            aiTable.setAiSeverity(severity);
+            aiTableService.save(aiTable);
+
+            // 7. 构造返回
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode resultJson = mapper.createObjectNode();
+            resultJson.put("message", message);
+            resultJson.put("code", code);
+            resultJson.put("severity", severity);
+
+            if ("AI响应异常".equals(message)) {
+                return Result.error("异常数据已保存，但AI响应异常");
+            } else {
+                return Result.success("异常数据保存，AI分析成功", resultJson.toString());
+            }
 
         } catch (Exception e) {
-            return Result.error("出现异常存储失败");
+            log.error("保存并AI分析异常失败", e);
+            return Result.error("保存或AI分析失败: " + e.getMessage());
         }
     }
 
-    /**
-     * 从AI响应中提取JSON部分
-     * AI有时会在JSON前后添加说明文字，需要提取出纯JSON
-     * @param response AI的原始响应
-     * @return 提取出的JSON字符串
-     */
-    private String extractJsonFromResponse(String response) {
-        if (response == null || response.trim().isEmpty()) {
-            return "[]";
-        }
-
-        // 尝试查找JSON数组开始和结束位置
-        int startIndex = response.indexOf('[');
-        int endIndex = response.lastIndexOf(']');
-
-        if (startIndex >= 0 && endIndex > startIndex) {
-            return response.substring(startIndex, endIndex + 1);
-        }
-
-        // 如果没有找到数组格式，尝试查找对象格式
-        startIndex = response.indexOf('{');
-        endIndex = response.lastIndexOf('}');
-
-        if (startIndex >= 0 && endIndex > startIndex) {
-            return response.substring(startIndex, endIndex + 1);
-        }
-
-        // 如果都没找到，返回原始响应
-        return response;
-    }
 
     /**
      * 分页查询异常信息
@@ -151,38 +187,4 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
        }
     }
 
-    @Override
-    public Result<String> sendDataToAI(DataETable dataETable) {
-        try {
-            // 加载知识库 JSON 文件
-            List<PromptKnowledge> knowledgeList = KnowledgeLoader.loadKnowledgeFromJson();
-
-            // 构建提示词
-            String prompt = new buildPromptWithKnowleConfig().buildPromptWithKnowledge(knowledgeList, dataETable);
-
-            // 调用 AI
-            Object aiResponseObj = knowledgeLoader.call(prompt);
-            String aiResponse = aiResponseObj.toString();
-            log.debug("AI原始响应：{}", aiResponse);
-
-            // 清理多余格式
-            aiResponse = aiResponse.replaceAll("```json", "").replaceAll("```", "").trim();
-
-            if (aiResponse == null || aiResponse.isEmpty() || !aiResponse.startsWith("{") || !aiResponse.endsWith("}")) {
-                return Result.error("AI 返回的不是有效的 JSON 格式: " + aiResponse);
-            }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode responseJson = objectMapper.readTree(aiResponse);
-            String message = responseJson.get("message").asText().replace("\\n", "\n");
-
-            ObjectNode updatedResponseJson = objectMapper.createObjectNode();
-            updatedResponseJson.put("message", message);
-            return Result.success(updatedResponseJson.toString());
-
-        } catch (Exception e) {
-            log.error("系统异常，分析失败", e);
-            return Result.error("系统异常，分析失败");
-        }
-    }
 }

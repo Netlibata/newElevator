@@ -36,18 +36,21 @@ public class DataETable implements Serializable {
      * 异常生成的时间，自动填入
      */
     @TableField(value = "create_time", fill = FieldFill.INSERT)
+    @JsonProperty("createTime")
     private LocalDateTime createTime;
 
     /**
      * 系统名称
      */
     @TableField("system_name")
+    @JsonProperty("systemName")
     private String systemName;
 
     /**
      * 子设备名称
      */
     @TableField("system_sq_name")
+    @JsonProperty("systemSqName")
     private String systemSqName;
 
     /**
