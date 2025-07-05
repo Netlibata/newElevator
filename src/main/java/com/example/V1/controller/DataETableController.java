@@ -29,7 +29,7 @@ public class DataETableController {
      * 异常数据接收接口
      */
     @PostMapping("/gain-data")
-    public Result<String> getgainData(@RequestBody DataETable dataETable){
+    public Result<DataETable> getgainData(@RequestBody DataETable dataETable){
         return dataETableService.getgainData(dataETable);
     }
 

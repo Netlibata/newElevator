@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IDataETableService extends IService<DataETable> {
 
     //异常数据接收
-    Result<String> getgainData(DataETable dataETable);
+    Result<DataETable> getgainData(DataETable dataETable);
 
     //分页查询异常数据
     Result<IPage<DataETable>> getErrorData(long current, long size, Long id, String systemName, String systemSqName);
