@@ -124,7 +124,7 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
             // 7. 构造返回
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode resultJson = mapper.createObjectNode();
-            resultJson.put("id", "d-" + System.currentTimeMillis()); // 或从dataETable.getId()生成
+            resultJson.put("id", "d-" + System.currentTimeMillis());
             resultJson.put("systemName", dataETable.getSystemName());
             resultJson.put("systemSqName", dataETable.getSystemSqName());
             resultJson.put("eName", dataETable.getEName());
