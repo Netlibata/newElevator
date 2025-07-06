@@ -2,13 +2,15 @@ package com.example.V1.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.V1.commont.Result;
-import com.example.V1.entity.DataETable;
 import com.example.V1.entity.Users;
 import com.example.V1.mapper.UsersMapper;
 import com.example.V1.service.IUsersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,17 +27,20 @@ import java.util.List;
 @Service
 public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements IUsersService {
 
+    @Autowired
+    private UsersMapper usersMapper;
+
     /**
      * 添加维修人员
      */
     @Override
-    public Result<String> addUser(Users users) {
+    public Result<String> addUser(Users users, HttpServletRequest request) {
+        // 保存用户
         log.info("接收到数据：{}", users);
         boolean save = this.save(users);
-        if(save){
+        if (save) {
             return Result.success("添加成功");
-        }
-        else{
+        } else {
             return Result.error("添加失败");
         }
     }
@@ -104,5 +109,4 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             return Result.error("系统异常，出现错误");
         }
     }
-
 }

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-public class buildPromptWithKnowleConfig {
+public class BuildPromptWithKnowleConfig {
     public String buildPromptWithKnowledge(List<PromptKnowledge> knowledgeList, DataETableForAiDTO data) throws JsonProcessingException {
         StringBuilder sb = new StringBuilder();
         sb.append("你是一名电梯故障分析专家，以下是你总结的一些经验知识：\n");
@@ -34,8 +34,6 @@ public class buildPromptWithKnowleConfig {
         sb.append("}\n");
         sb.append("```\n");
 
-        /**
-        sb.append("{\"message\": \"通过异常数据得知[故障类型]，详细分析[原因]，详细建议[维修建议]\", \"code\": 0}\n");*/
         sb.append("\n你必须严格按照以上JSON格式返回，不要添加任何其他内容，并且还有其他注意事项：\n");
         sb.append("1. 必须使用JSON格式，包含message和code两个字段\n");
         sb.append("2. code只能是数字0或1，不能使用字符串\n");

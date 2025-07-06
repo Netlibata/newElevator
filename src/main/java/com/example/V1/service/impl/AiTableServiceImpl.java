@@ -7,7 +7,7 @@ import com.example.V1.service.IAiTableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+
 
 /**
  * AI表服务实现类

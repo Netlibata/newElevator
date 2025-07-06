@@ -5,8 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.V1.Dto.DataETableForAiDTO;
 import com.example.V1.commont.Result;
+import com.example.V1.config.AiPredictsLifespanConfig;
 import com.example.V1.config.KnowledgeLoader;
-import com.example.V1.config.buildPromptWithKnowleConfig;
+import com.example.V1.config.BuildPromptWithKnowleConfig;
 import com.example.V1.entity.AiTable;
 import com.example.V1.entity.DataETable;
 import com.example.V1.entity.MaintainTable;
@@ -14,6 +15,7 @@ import com.example.V1.entity.PromptKnowledge;
 import com.example.V1.mapper.DataETableMapper;
 import com.example.V1.service.IDataETableService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -82,7 +85,7 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
 
             // 4. 构建提示词
             List<PromptKnowledge> knowledgeList = KnowledgeLoader.loadKnowledgeFromJson();
-            String prompt = new buildPromptWithKnowleConfig().buildPromptWithKnowledge(knowledgeList, dataForAI);
+            String prompt = new BuildPromptWithKnowleConfig().buildPromptWithKnowledge(knowledgeList, dataForAI);
 
             // 5. 调用 AI 并处理响应
             String message = "AI响应异常";
@@ -194,4 +197,44 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
        }
     }
 
+    /**
+     * AI预测电梯寿命
+     */
+    @Override
+    public Result<String> getLifetimeAnalysis() {
+        try {
+            // 获取异常表最新的十条消息
+            LambdaQueryWrapper<DataETable> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.orderByDesc(DataETable::getCreateTime)
+                    .last("LIMIT 10");
+            List<DataETable> dataList = this.baseMapper.selectList(queryWrapper);
+
+            // 将数据转换为 JSON 字符串
+            ObjectMapper objectMapper = new ObjectMapper();
+            String json = objectMapper.writeValueAsString(dataList);
+
+            // 调试输出，看一下数据格式
+            System.out.println("查询结果 JSON： " + json);
+
+            // 构造提示词
+            List<PromptKnowledge> knowledgeList = KnowledgeLoader.loadKnowledgeFromJson();
+            String prompt = new AiPredictsLifespanConfig().aiPredictsLifespan(knowledgeList, json);
+
+            // 调用 AI 进行寿命预测分析
+            String aiResult = knowledgeLoader.call(prompt);
+
+            // 返回 AI 分析结果
+            return Result.success(aiResult);
+
+        } catch (JsonProcessingException e) {
+            // 捕获 JSON 处理异常
+            return Result.error("JSON 处理失败: " + e.getMessage());
+        } catch (IOException e) {
+            // 捕获 IO 异常
+            return Result.error("AI 分析失败: " + e.getMessage());
+        } catch (Exception e) {
+            // 捕获其他异常
+            return Result.error("分析失败: " + e.getMessage());
+        }
+    }
 }

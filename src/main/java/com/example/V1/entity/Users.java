@@ -53,5 +53,14 @@ public class Users implements Serializable {
     @TableField("position")
     private String position;
 
+    private String token;
 
+    private String email;
+
+    private String password;
+
+    private String role;
+
+    @JsonProperty("accessToken")
+    private String accessToken;
 }

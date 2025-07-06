@@ -4,6 +4,7 @@ package com.example.V1.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.V1.commont.Result;
 import com.example.V1.entity.DataETable;
+import com.example.V1.service.IAiTableService;
 import com.example.V1.service.IDataETableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,14 @@ public class DataETableController {
     private IDataETableService dataETableService;
 
     /**
+     * 寿命分析
+     */
+    @GetMapping("/lifetime-analysis")
+    public Result<String> getLifetimeAnalysis() {
+        return dataETableService.getLifetimeAnalysis();
+    }
+
+    /**
      * 异常数据接收接口，AI分析并存储
      */
     @PostMapping("/gain-data")
@@ -46,4 +55,5 @@ public class DataETableController {
         log.info("current = {},size = {},id = {},systemName = {}，systemSqName = {}", current, size, id, systemName, systemSqName);
         return dataETableService.getErrorData(current,size,id,systemName,systemSqName);
     }
+
 }

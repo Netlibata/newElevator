@@ -17,12 +17,13 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOriginPattern("*"); // 允许所有域名访问，生产环境中应设置具体的前端域名
-        corsConfiguration.addAllowedHeader("*"); // 允许所有请求头
-        corsConfiguration.addAllowedMethod("*"); // 允许所有HTTP方法
-        corsConfiguration.setAllowCredentials(true); // 允许发送cookie
-        corsConfiguration.setMaxAge(3600L); // 预检请求有效期1小时
+        corsConfiguration.addAllowedOriginPattern("*");  // 允许所有域名访问，生产环境中应设置具体的前端域名
+        corsConfiguration.addAllowedHeader("*");  // 允许所有请求头
+        corsConfiguration.addAllowedMethod("*");  // 允许所有HTTP方法
+        corsConfiguration.setAllowCredentials(true);  // 允许发送cookie
+        corsConfiguration.setMaxAge(3600L);  // 预检请求有效期1小时
         source.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(source);
     }
+
 }

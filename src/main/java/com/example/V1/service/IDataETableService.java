@@ -21,4 +21,6 @@ public interface IDataETableService extends IService<DataETable> {
     //分页查询异常数据
     Result<IPage<DataETable>> getErrorData(long current, long size, Long id, String systemName, String systemSqName);
 
+    //生命周期分析
+    Result<String> getLifetimeAnalysis();
 }

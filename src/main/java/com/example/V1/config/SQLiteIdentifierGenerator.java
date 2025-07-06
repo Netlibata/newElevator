@@ -18,13 +18,13 @@ public class SQLiteIdentifierGenerator implements IdentifierGenerator {
     @Resource
     private DataSource dataSource;
 
-   @Override
+    @Override
     public Number nextId(Object entity) {
         String tableName = getTableName(entity);
         return getNextId(tableName);
     }
 
-   private String getTableName(Object entity) {
+    private String getTableName(Object entity) {
         // 首先尝试从@TableName注解获取表名
         TableName tableNameAnnotation = entity.getClass().getAnnotation(TableName.class);
         if (tableNameAnnotation != null) {
@@ -53,16 +53,16 @@ public class SQLiteIdentifierGenerator implements IdentifierGenerator {
     }
 
     private Long getNextId(String tableName) {
-        try (Connection conn = dataSource.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "SELECT COALESCE(MAX(id), 0) FROM " + tableName)) {
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    Long currentMaxId = rs.getLong(1);
-                    return currentMaxId + 1;
-                }
-                return 1L;
+        // 获取连接和执行查询
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT COALESCE(MAX(id), 0) FROM " + tableName);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                Long currentMaxId = rs.getLong(1);
+                return currentMaxId + 1;
             }
+            return 1L;
         } catch (SQLException e) {
             throw new RuntimeException("获取下一个ID失败: " + e.getMessage(), e);
         }
