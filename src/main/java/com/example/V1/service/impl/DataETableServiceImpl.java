@@ -88,6 +88,7 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
             String message = "AI响应异常";
             int code = 0;
             String severity = "未知";
+            String suggestion = "AI未返回建议";
 
             try {
                 Object aiResponseObj = knowledgeLoader.call(prompt);
@@ -103,8 +104,9 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
 
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode jsonNode = mapper.readTree(aiResponse);
-                message = jsonNode.get("message").asText().replace("\\n", "\n");
-                code = jsonNode.has("code") ? jsonNode.get("code").asInt() : 0;
+                message = jsonNode.has("aiResult") ? jsonNode.get("aiResult").asText().replace("\\n", "\n") : "AI未返回分析内容";
+                code = jsonNode.has("aiCode") ? jsonNode.get("aiCode").asInt() : 0;
+                suggestion = jsonNode.has("建议") ? jsonNode.get("建议").asText().replace("\\n", "\n") : "AI未返回建议";
                 severity = code == 1 ? "严重故障" : "警告";
 
             } catch (Exception aiEx) {
@@ -122,9 +124,14 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
             // 7. 构造返回
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode resultJson = mapper.createObjectNode();
-            resultJson.put("message", message);
-            resultJson.put("code", code);
-            resultJson.put("severity", severity);
+            resultJson.put("id", "d-" + System.currentTimeMillis()); // 或从dataETable.getId()生成
+            resultJson.put("systemName", dataETable.getSystemName());
+            resultJson.put("systemSqName", dataETable.getSystemSqName());
+            resultJson.put("eName", dataETable.getEName());
+            resultJson.put("eData", dataETable.getEData());
+            resultJson.put("aiCode", code);
+            resultJson.put("aiResult", message);
+            resultJson.put("建议", suggestion);
 
             if ("AI响应异常".equals(message)) {
                 return Result.error("异常数据已保存，但AI响应异常");

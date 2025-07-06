@@ -10,8 +10,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class NewElevatorApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
+
         SpringApplication.run(NewElevatorApplication.class, args);
+
     }
 
 }

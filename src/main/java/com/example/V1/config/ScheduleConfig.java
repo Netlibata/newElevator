@@ -18,13 +18,16 @@ public class ScheduleConfig {
     /**
      * 每天凌晨5点检查是否超过100条，超过就删除最旧20条
      */
+    //@Scheduled(cron = "0 * * * * ?") // 每分钟执行一次
     @Scheduled(cron = "0 0 5 * * ?")
     public void deleteIfTooMuch() {
         int total = dataETableMapper.getTotalCount();
         log.info("当前数据总量为：{} 条", total);
-        if (total > 100) {
+        if (total > 30) {
             int count = dataETableMapper.deleteOldest20();
             log.info("超过100条，已删除最旧的 {} 条记录", count);
+            int tota = dataETableMapper.getTotalCount();
+            log.info("当前数据总量为：{} 条", tota);
         } else {
             log.info("数据量未超限，无需清理");
         }

@@ -12,7 +12,7 @@ spring:
 
   ai:
     openai:
-      api-key: skhahahahahah
+      api-key: s
       base-url: https://api.deepseek.com
       chat:
         options:
