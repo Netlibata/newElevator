@@ -30,7 +30,7 @@ public class BuildPromptWithKnowleConfig {
         sb.append("  \"eData\": \"").append(data.getESqName()).append("\",\n");
         sb.append("  \"aiCode\": 0,\n");
         sb.append("  \"aiResult\": \"分析结果：请填写详细的故障分析，如：……\",\n");
-        sb.append("  \"建议\": \"请填写详细的处理建议，如：……\"\n");
+        sb.append("  \"建议\": \"请填写详细的处理建议以及建议分配任务给维护人员还是技术人员，如：……\"\n");
         sb.append("}\n");
         sb.append("```\n");
 
@@ -44,6 +44,7 @@ public class BuildPromptWithKnowleConfig {
         sb.append("7. 请根据上面知识和异常数据，详细判断故障类型、详细原因、详细维修建议，并判断故障等级：\n");
         sb.append("8. 严重故障（code=1）：需要立即停止电梯运行，显示红色弹窗，必须维修人员处理后才能恢复运行\n");
         sb.append("9. 警告（code=0）：电梯可以继续运行，显示黄色弹窗，可以忽略或上报\n");
+        sb.append("10. 必须返回建议分配给技术人员或者维护人员\n");
 
         return sb.toString();
     }

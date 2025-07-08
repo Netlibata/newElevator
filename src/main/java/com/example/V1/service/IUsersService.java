@@ -24,9 +24,11 @@ public interface IUsersService extends IService<Users> {
     Result<String> deleteUser(Integer id);
 
     //获取人员
-    Result <List<Users>> getUser(Integer id, String userName);
+    Result <List<Users>> getUser(Integer id, String userName,String condition);
 
     //修改人员信息
     Result<String> updateUser(Users users);
 
+    //登陆
+    Result<String> login(Users users, HttpServletRequest request);
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.V1.Dto.MaintainTableDTO;
 import com.example.V1.Dto.MaintainWithDataDTO;
 import com.example.V1.commont.Result;
+import com.example.V1.entity.DataETable;
 import com.example.V1.entity.MaintainTable;
 import com.example.V1.mapper.MaintainTableMapper;
 import com.example.V1.service.IMaintainTableService;
@@ -121,6 +122,24 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
         } catch (Exception e) {
             log.error("系统异常，更新失败", e);
             return Result.error("系统异常，更新失败");
+        }
+    }
+
+    @Override
+    public Result<String> addMaintain(MaintainTable maintainTable) {
+        try {
+            if (maintainTable.getUserId() == null || maintainTable.getMtDataId() == null) {
+                return Result.error("缺少用户ID或异常数据ID");
+            }
+            boolean ab=this.save(maintainTable);
+            if(!ab){
+                return Result.error("维修记录上报失败");
+            }
+
+            return Result.success("维修记录上报成功");
+        } catch (Exception e) {
+            log.error("上报失败", e);
+            return Result.error("系统出现异常上报失败：" + e.getMessage());
         }
     }
 }

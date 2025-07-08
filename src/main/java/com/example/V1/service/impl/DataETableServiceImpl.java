@@ -8,10 +8,7 @@ import com.example.V1.commont.Result;
 import com.example.V1.config.AiPredictsLifespanConfig;
 import com.example.V1.config.KnowledgeLoader;
 import com.example.V1.config.BuildPromptWithKnowleConfig;
-import com.example.V1.entity.AiTable;
-import com.example.V1.entity.DataETable;
-import com.example.V1.entity.MaintainTable;
-import com.example.V1.entity.PromptKnowledge;
+import com.example.V1.entity.*;
 import com.example.V1.mapper.DataETableMapper;
 import com.example.V1.service.IDataETableService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -42,8 +39,7 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
 
 
 
-    @Autowired
-    private MaintainTableServiceImpl maintainTableService;
+
 
     @Autowired
     private AiTableServiceImpl aiTableService;
@@ -70,9 +66,6 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
             if (!saved || dataETable.getId() == null) {
                 return Result.error("异常数据保存失败");
             }
-
-            //在维护表中插入异常表的id
-            maintainTableService.save(new MaintainTable().setMtDataId(dataETable.getId()));
 
             Integer errorId = dataETable.getId();
 
@@ -127,7 +120,7 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
             // 7. 构造返回
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode resultJson = mapper.createObjectNode();
-            resultJson.put("id", "d-" + System.currentTimeMillis());
+            resultJson.put("mtDataId", dataETable.getId());//返回异常数据的id
             resultJson.put("systemName", dataETable.getSystemName());
             resultJson.put("systemSqName", dataETable.getSystemSqName());
             resultJson.put("eName", dataETable.getEName());

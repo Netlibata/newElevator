@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.V1.Dto.MaintainTableDTO;
 import com.example.V1.Dto.MaintainWithDataDTO;
 import com.example.V1.commont.Result;
+import com.example.V1.entity.MaintainTable;
 import com.example.V1.service.IMaintainTableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +49,13 @@ public class MaintainTableController {
     @PostMapping("/update-maintain")
     public Result<String> updateMaintain(@RequestBody MaintainTableDTO maintainTableDTO) {
         return imaintainTableService.updateMaintain(maintainTableDTO);
+    }
+
+    /**
+     * 添加维护记录
+     */
+    @PostMapping("/add-maintain")
+    public Result<String> addMaintain(@RequestBody MaintainTable maintainTable) {
+        return imaintainTableService.addMaintain(maintainTable);
     }
 }

@@ -24,4 +24,7 @@ public interface IMaintainTableService extends IService<MaintainTable> {
 
      //更新维护记录
     Result<String> updateMaintain(MaintainTableDTO maintainTableDTO);
+
+    //添加维护记录
+    Result<String> addMaintain(MaintainTable maintainTable);
 }

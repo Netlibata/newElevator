@@ -52,8 +52,9 @@ public class UsersController {
      */
     @GetMapping("/get-user")
     public Result<List<Users>> getUser(@RequestParam(value ="id",  required = false) Integer id,
-                                       @RequestParam(value ="userName", required = false)String userName){
-        return usersService.getUser(id,userName);
+                                       @RequestParam(value ="userName", required = false)String userName,
+                                       @RequestParam(value ="condition", required = false)String condition){
+        return usersService.getUser(id,userName,condition);
     }
 
     /**
@@ -62,6 +63,15 @@ public class UsersController {
     @PostMapping("/update-user")
     public Result<String> updateUser(@RequestBody Users users){
         return usersService.updateUser(users);
+    }
+
+    /**
+     * 登录
+     */
+    @PostMapping("/login")
+    public Result<String> login(@RequestBody Users users,
+                                HttpServletRequest request) {
+        return usersService.login(users, request);
     }
 
 }

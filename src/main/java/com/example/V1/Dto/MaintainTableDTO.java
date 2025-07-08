@@ -15,4 +15,5 @@ public class MaintainTableDTO {
 
     private Integer id;
     private int sum;
+
 }
