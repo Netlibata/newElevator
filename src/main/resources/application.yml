@@ -6,11 +6,7 @@ spring:
     driver-class-name: org.sqlite.JDBC
     username: root
     password:
-    hikari:
-      maximum-pool-size: 10         # 最大连接池大小
-      minimum-idle: 5              # 最小空闲连接数
-      idle-timeout: 30000          # 空闲连接超时（毫秒）
-      max-lifetime: 1800000        # 连接最大生命周期（毫秒）
+
   sql:
     init:
       mode: never
@@ -42,11 +38,3 @@ mybatis-plus:
       id-type: AUTO
   mapper-locations: classpath*:mapper/*.xml
 
-jwt:
-  secret: Netlibata
-  expirationMs: 86400000
-
-logging:
-  level:
-    root: info
-    com.example.goodlearnai: debug

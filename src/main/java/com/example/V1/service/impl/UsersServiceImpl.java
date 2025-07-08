@@ -8,10 +8,11 @@ import com.example.V1.service.IUsersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,16 +28,18 @@ import java.util.List;
 @Service
 public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements IUsersService {
 
-    @Autowired
-    private UsersMapper usersMapper;
-
-    /**
-     * 添加维修人员
-     */
     @Override
     public Result<String> addUser(Users users, HttpServletRequest request) {
-        // 保存用户
         log.info("接收到数据：{}", users);
+
+        // 生成一个盐
+        String salt = generateSalt();
+        users.setSalt(salt); // 保存到数据库
+
+        // 对密码进行加盐 SHA-1 加密
+        String encryptedPassword = encryptPasswordWithSalt(users.getPassword(), salt);
+        users.setPassword(encryptedPassword);
+
         boolean save = this.save(users);
         if (save) {
             return Result.success("添加成功");
@@ -44,6 +47,37 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
             return Result.error("添加失败");
         }
     }
+
+    //加盐
+    private String generateSalt() {
+        // 生成一个16位随机盐
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+        StringBuilder sb = new StringBuilder();
+        for (byte b : salt) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+    //SHA-1加密
+    private String encryptPasswordWithSalt(String password, String salt) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            String saltedPassword = password + salt;
+            byte[] hashedBytes = digest.digest(saltedPassword.getBytes("UTF-8"));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashedBytes) {
+                hexString.append(String.format("%02x", b));
+            }
+            return hexString.toString();
+        } catch (Exception e) {
+            log.error("SHA1加盐加密失败", e);
+            return null;
+        }
+    }
+
+
 
     /**
      * 删除人员
@@ -70,25 +104,31 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
      */
     @Override
     public Result<List<Users>> getUser(Integer id, String userName) {
-        try{
+        try {
             LambdaQueryWrapper<Users> queryWrapper = new LambdaQueryWrapper<>();
-            if(id == null){
+
+            // 条件拼接
+            if (id != null) {
                 queryWrapper.eq(Users::getId, id);
             }
-            if(userName != null||!userName.isEmpty()){
+            if (userName != null && !userName.isEmpty()) {
                 queryWrapper.like(Users::getUserName, userName);
             }
-            // 如果都没传，说明查全部
+
+            List<Users> users;
             if (id == null && (userName == null || userName.isEmpty())) {
-                List<Users> users = this.list(); // 查询全部
+                users = this.list(); // 查询全部
                 return Result.success("查询全部用户成功", users);
+            } else {
+                users = this.list(queryWrapper); // 按条件查询
+                return Result.success("查询成功", users);
             }
-            Users user = this.getOne(queryWrapper);
-            return Result.success("查询成功", Collections.singletonList(user));
-        }catch (Exception e) {
+        } catch (Exception e) {
+            System.out.println("错误信息：" + e.getMessage());
             return Result.error("系统异常，出现错误");
         }
     }
+
 
     /**
      * 修改人员信息
