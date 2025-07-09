@@ -74,4 +74,20 @@ public class UsersController {
         return usersService.login(users, request);
     }
 
+    /**
+     * 获取当前用户
+     */
+    @GetMapping("/me")
+    public Result<Users> getLoginUser(HttpServletRequest request) {
+        return usersService.getLoginUser(request);
+    }
+
+    /**
+     * 登出接口
+     */
+    @PostMapping("/logout")
+    public Result<String> logout(HttpServletRequest request) {
+        return usersService.logout(request);
+    }
+
 }

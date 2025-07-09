@@ -105,6 +105,9 @@ public class DataETableServiceImpl extends ServiceImpl<DataETableMapper, DataETa
                 suggestion = jsonNode.has("建议") ? jsonNode.get("建议").asText().replace("\\n", "\n") : "AI未返回建议";
                 severity = code == 1 ? "严重故障" : "警告";
 
+                //打印AI解析的数据
+                log.info("message = {},code ={},suggestion ={},severity={}",message,code,suggestion,severity);
+
             } catch (Exception aiEx) {
                 log.warn("AI解析失败，使用默认值: {}", aiEx.getMessage());
             }

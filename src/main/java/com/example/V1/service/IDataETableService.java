@@ -24,4 +24,6 @@ public interface IDataETableService extends IService<DataETable> {
 
     //生命周期分析
     Result<String> getLifetimeAnalysis();
+
+
 }

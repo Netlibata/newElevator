@@ -31,4 +31,10 @@ public interface IUsersService extends IService<Users> {
 
     //登陆
     Result<String> login(Users users, HttpServletRequest request);
+
+    //获取当前登录
+    Result<Users> getLoginUser(HttpServletRequest request);
+
+    //登出接口
+    Result<String> logout(HttpServletRequest request);
 }

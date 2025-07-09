@@ -14,7 +14,9 @@ import java.security.NoSuchAlgorithmException;
 
 import java.security.SecureRandom;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -159,10 +161,16 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
     @Override
     public Result<String> login(Users users, HttpServletRequest request) {
         String password = users.getPassword();
-        Integer id = users.getId();
+        //Integer id = users.getId();
+        String userPhone = users.getUserPhone();
+        String email = users.getEmail();
 
-        // 先根据用户id查用户
-        Users user =  this.getOne(new LambdaQueryWrapper<Users>().eq(Users::getId, id));
+        Users user = this.getOne(new LambdaQueryWrapper<Users>()
+                .and(wrapper -> wrapper
+                        .eq(userPhone != null, Users::getUserPhone, userPhone)
+                        .or()
+                        .eq(email != null, Users::getEmail, email)
+                ));
         if(user == null){
             return Result.error("用户不存在");
         }
@@ -176,6 +184,25 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         // 验证成功，保存用户到 session（自动给浏览器返回 JSESSIONID）
         request.getSession().setAttribute("user", user);
 
-        return Result.success("登录成功");
+        return Result.success("登录成功",user.getRole());
+    }
+
+    /**
+     * 获取当前登录用户
+     */
+    @Override
+    public Result<Users> getLoginUser(HttpServletRequest request) {
+        Users user = (Users) request.getSession().getAttribute("user");
+        if (user == null) return Result.error("未登录");
+        return Result.success("已登录", user);
+    }
+
+    /**
+     * 登出接口
+     */
+    @Override
+    public Result<String> logout(HttpServletRequest request) {
+        request.getSession().invalidate(); // 清空 Session
+        return Result.success("退出登录成功");
     }
 }
