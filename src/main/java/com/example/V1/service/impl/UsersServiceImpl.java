@@ -10,13 +10,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import java.security.SecureRandom;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -143,6 +139,9 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements
         try{
             LambdaQueryWrapper<Users> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(Users::getId, users.getId());
+
+
+
             boolean update = this.update(users, queryWrapper);
             if(update){
                 return Result.success("修改成功");

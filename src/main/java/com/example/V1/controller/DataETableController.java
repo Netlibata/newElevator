@@ -49,7 +49,7 @@ public class DataETableController {
     @GetMapping("/selectData")
     public Result<IPage<DataETable>> getErrorData(
             @RequestParam(defaultValue = "1") long current,
-            @RequestParam(defaultValue = "10") long size,
+            @RequestParam(defaultValue = "9") long size,
             @RequestParam(value ="id",  required = false) Long id,
             @RequestParam(value ="systemName",  required = false) String systemName,
             @RequestParam(value ="systemSqName",  required = false) String systemSqName){

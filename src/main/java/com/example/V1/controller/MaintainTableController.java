@@ -34,7 +34,7 @@ public class MaintainTableController {
      */
     @GetMapping("/get-maintain")
     public Result<IPage<MaintainWithDataDTO>> getMaintain(@RequestParam(defaultValue = "1") long current,
-                                                          @RequestParam(defaultValue = "10") long size,
+                                                          @RequestParam(defaultValue = "9") long size,
                                                           @RequestParam(value ="id",  required = false) Long id,
                                                           @RequestParam(value ="userId",  required = false) Long userId,
                                                           @RequestParam(value ="systemName",  required = false) String systemName,

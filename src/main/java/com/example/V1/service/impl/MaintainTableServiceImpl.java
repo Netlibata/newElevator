@@ -6,9 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.V1.Dto.MaintainTableDTO;
 import com.example.V1.Dto.MaintainWithDataDTO;
 import com.example.V1.commont.Result;
-import com.example.V1.entity.DataETable;
 import com.example.V1.entity.MaintainTable;
+import com.example.V1.entity.Users;
 import com.example.V1.mapper.MaintainTableMapper;
+import com.example.V1.mapper.UsersMapper;
 import com.example.V1.service.IMaintainTableService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,9 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
     @Autowired
     private MaintainTableMapper maintainMapper;
 
+    @Autowired
+    private UsersMapper userMapper;
+
     /**
      * 分页查询维护记录
      */
@@ -54,7 +58,6 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
                 log.info("未查询到相关维护数据: 当前页={}, 每页大小={}", current, size);
                 return Result.success("未查询到相关数据", pageData);
             }
-
 
             // 正常返回
             log.info("分页查询维护记录成功: 当前页={}, 每页大小={}, 总记录数={}, 总页数={}",
@@ -89,7 +92,7 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
             // 构造更新条件，确保只更新满足条件的记录
             LambdaUpdateWrapper<MaintainTable> updateWrapper = new LambdaUpdateWrapper<>();
             updateWrapper.eq(MaintainTable::getId, maintainTableDTO.getId())
-                    .eq(MaintainTable::getStatus, "未维护")
+                    .eq(MaintainTable::getStatus, "待处理")
                     .eq(MaintainTable::getSum, 0);
 
             // 构建要更新的对象
@@ -110,6 +113,18 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
             // 执行更新
             boolean update = this.update(updateRecord, updateWrapper);
 
+            // 如果状态是已维护，更新用户表中的 condition 字段为“空闲”
+            if (update && "已维护".equals(maintainTableDTO.getStatus())) {
+                // 获取用户信息
+                Users user = userMapper.selectById(maintainTableDTO.getUserId());
+                if (user != null) {
+                    // 更新用户的 condition 字段为“空闲”
+                    user.setCondition("空闲");
+                    userMapper.updateById(user);
+                    log.info("用户状态更新成功，用户id = {}, condition = 空闲", maintainTableDTO.getUserId());
+                }
+            }
+
             log.info("后端存入后 id = {}, status = {}, sum = {}, update = {},userId = {}", maintainTableDTO.getId(), updateRecord.getStatus(), updateRecord.getSum(), update, maintainTableDTO.getUserId());
 
             if (update) {
@@ -125,6 +140,11 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
         }
     }
 
+    /**
+     * 增加新的维护记录
+     * @param maintainTable
+     * @return
+     */
     @Override
     public Result<String> addMaintain(MaintainTable maintainTable) {
         try {
