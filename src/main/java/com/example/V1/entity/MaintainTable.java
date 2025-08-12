@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
+import com.example.V1.config.LocalDateTimeSerializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -36,6 +38,7 @@ public class MaintainTable implements Serializable {
      * 维护时间，自动填入
      */
     @TableField(value = "mt_time", fill = FieldFill.INSERT)
+    //@JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonProperty("mtTime")
     private LocalDateTime mtTime;
 
@@ -70,5 +73,8 @@ public class MaintainTable implements Serializable {
      */
     @TableField(value = "sum")
     private int sum;
+
+    @TableField(value = "descr")
+    private String descr;
 
 }

@@ -1,10 +1,8 @@
 package com.example.V1.Dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class DataETableForAiDTO {
     private String systemName;
     private String systemSqName;

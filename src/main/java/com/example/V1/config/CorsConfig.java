@@ -17,7 +17,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOriginPattern("*");  // 允许所有域名访问，生产环境中应设置具体的前端域名http://10.181.173.166:5173
+        corsConfiguration.addAllowedOriginPattern("*");  // 允许所有域名访问，生产环境中应设置具体的前端域名http://10.221.181.3:5173。。http://10.181.254.208:5173
         corsConfiguration.addAllowedHeader("*");  // 允许所有请求头
         corsConfiguration.addAllowedMethod("*");  // 允许所有HTTP方法
         corsConfiguration.setAllowCredentials(true);  // 允许发送cookie

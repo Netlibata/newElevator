@@ -3,7 +3,8 @@
 <mapper namespace="com.example.V1.mapper.MaintainTableMapper">
 
     <select id="getMaintainWithJoin" resultType="com.example.V1.Dto.MaintainWithDataDTO">
-        SELECT m.id, m.status, m.remark, m.user_id AS userId,
+        SELECT m.id, m.status, m.remark, m.descr,
+        m.user_id AS userId,
         d.system_name AS systemName,
         m.mt_time AS mtTime
         FROM maintain_table m
@@ -13,14 +14,13 @@
                 AND m.id = #{id}
             </if>
             <if test="userId != null">
-                AND m.user_id LIKE CONCAT('%', #{userId}, '%')
+                AND m.user_id LIKE '%' || #{userId} || '%'
             </if>
             <if test="systemName != null and systemName != ''">
-                AND d.system_name LIKE CONCAT('%', #{systemName}, '%')
+                AND d.system_name LIKE '%' || #{systemName} || '%'
             </if>
         </where>
         ORDER BY m.mt_time DESC
     </select>
-
 
 </mapper>

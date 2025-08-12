@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -59,6 +60,7 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
                 return Result.success("未查询到相关数据", pageData);
             }
 
+
             // 正常返回
             log.info("分页查询维护记录成功: 当前页={}, 每页大小={}, 总记录数={}, 总页数={}",
                     current, size, pageData.getTotal(), pageData.getPages());
@@ -100,6 +102,7 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
             updateRecord.setStatus(maintainTableDTO.getStatus());
             updateRecord.setRemark(maintainTableDTO.getRemark());
             updateRecord.setUserId(maintainTableDTO.getUserId());
+            updateRecord.setDescr(maintainTableDTO.getDescr());
 
             // 如果旧sum是0，则设置新sum为1并更新时间
             if (oldRecord.getSum() == 0) {
@@ -114,15 +117,23 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
             boolean update = this.update(updateRecord, updateWrapper);
 
             // 如果状态是已维护，更新用户表中的 condition 字段为“空闲”
-            if (update && "已维护".equals(maintainTableDTO.getStatus())) {
-                // 获取用户信息
+            if ("已维护".equals(maintainTableDTO.getStatus())) {
+                // 获取并打印用户信息
                 Users user = userMapper.selectById(maintainTableDTO.getUserId());
+                log.info("查询到用户: {}", user);
+
+                // 更新用户状态
                 if (user != null) {
-                    // 更新用户的 condition 字段为“空闲”
                     user.setCondition("空闲");
-                    userMapper.updateById(user);
-                    log.info("用户状态更新成功，用户id = {}, condition = 空闲", maintainTableDTO.getUserId());
+                    int rowsUpdated = userMapper.updateById(user);
+                    log.info("更新用户状态行数: {}", rowsUpdated);  // 记录更新的行数
+                    if (rowsUpdated > 0) {
+                        log.info("用户状态更新成功，用户id = {}, condition = 空闲", maintainTableDTO.getUserId());
+                    } else {
+                        log.error("用户状态更新失败，未能更新用户表，用户id = {}", maintainTableDTO.getUserId());
+                    }
                 }
+
             }
 
             log.info("后端存入后 id = {}, status = {}, sum = {}, update = {},userId = {}", maintainTableDTO.getId(), updateRecord.getStatus(), updateRecord.getSum(), update, maintainTableDTO.getUserId());
@@ -151,6 +162,7 @@ public class MaintainTableServiceImpl extends ServiceImpl<MaintainTableMapper, M
             if (maintainTable.getUserId() == null || maintainTable.getMtDataId() == null) {
                 return Result.error("缺少用户ID或异常数据ID");
             }
+            //前端需要传回数据
             boolean ab=this.save(maintainTable);
             if(!ab){
                 return Result.error("维修记录上报失败");

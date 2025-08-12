@@ -2,14 +2,19 @@ spring:
   application:
     name: ElectorAI
   datasource:
-    url: jdbc:sqlite:SQL/SQLelevator.db
-    driver-class-name: org.sqlite.JDBC
-    username: root
+    url: jdbc:h2:file:~/elevator_data/H2elevator;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;INIT=CREATE SCHEMA IF NOT EXISTS public
+    driver-class-name: org.h2.Driver
+    username: sa
     password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
 
   sql:
     init:
-      mode: never
+      mode: always
+      schema-locations: classpath:SQL/fix_sequence.sql,classpath:SQL/h2_data_import.sql
 
   ai:
     openai:
@@ -30,6 +35,7 @@ server:
   port: 8080
 
 mybatis-plus:
+  type-handlers-package: com.example.V1.handler
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true

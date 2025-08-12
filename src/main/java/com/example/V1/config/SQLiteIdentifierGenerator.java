@@ -53,16 +53,15 @@ public class SQLiteIdentifierGenerator implements IdentifierGenerator {
     }
 
     private Long getNextId(String tableName) {
-        // 获取连接和执行查询
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT COALESCE(MAX(id), 0) FROM " + tableName);
+             PreparedStatement ps = conn.prepareStatement("SELECT MAX(id) FROM " + tableName);
              ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
-                Long currentMaxId = rs.getLong(1);
-                return currentMaxId + 1;
+                long maxId = rs.getLong(1); // 获取 MAX(id)
+                return rs.wasNull() ? 1L : maxId + 1; // 处理 NULL 情况
             }
-            return 1L;
+            return 1L; // 表为空时的默认值
         } catch (SQLException e) {
             throw new RuntimeException("获取下一个ID失败: " + e.getMessage(), e);
         }

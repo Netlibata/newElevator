@@ -62,7 +62,12 @@ public class Elevator {
 
     private void simulateElevatorMovement() {
         try {
-            this.temperature = 22.0 + (Math.random() * 5);
+            // 模拟温度缓慢变化，基于前一次温度轻微浮动
+            double tempDelta = (random.nextDouble() - 0.5) * 0.2; // 每次最多变化 ±0.1
+            temperature += tempDelta;
+            temperature = Math.max(20.0, Math.min(30.0, temperature)); // 限定温度在20~30之间
+            temperature = Math.round(temperature * 10.0) / 10.0; // 保留1位小数
+
 
             if ("运行中".equals(status)) {
                 double step = speed * 0.150;

@@ -30,4 +30,6 @@ public class MaintainWithDataDTO {
     // 系统名称（来自异常表）
     private String systemName;
 
+    private String descr;
+
 }

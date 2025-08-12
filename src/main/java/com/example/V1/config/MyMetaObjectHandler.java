@@ -22,7 +22,7 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, LocalDateTime.now());
         Object statusVal = getFieldValByName("status", metaObject);
         if (statusVal == null) {
-            this.strictInsertFill(metaObject, "status", String.class, "未维护");
+            this.strictInsertFill(metaObject, "status", String.class, "待处理");
         }
     }
 

@@ -10,10 +10,18 @@ public class MaintainTableDTO {
     private String status;
     private String remark;
 
+
     @JsonProperty("userId")
     private Integer userId;
 
     private Integer id;
+
     private int sum;
+
+    //人员表的人员状态
+    private String condition;
+
+    private String descr;
+
 
 }
